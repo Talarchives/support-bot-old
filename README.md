@@ -1,6 +1,5 @@
-# Bot Base
-A cool repository I use to start making a new bot.
-It saves me a lot of time.
+# Support Bot
+A discord support bot
 
 # Things to do before starting
 ### Run `npm i`

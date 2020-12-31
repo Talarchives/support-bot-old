@@ -1,0 +1,21 @@
+{
+  "prefix": "?",
+  "presence": {
+      "activity": { "name": "the birds 🐦", "type": "WATCHING" },
+      "status": "online"
+  },
+  "startPresence": {
+    "status": "idle",
+    "activity": {
+      "name": "a loading game ⏳",
+      "type": "COMPETING"
+    }
+  },
+  "bins": [
+    "https://hastebin.com",
+    "https://starb.in",
+    "https://haste.red-panda.red/",
+    "https://paste.hep.gg/",
+    "https://haste.rauf.wtf/"
+  ]
+}

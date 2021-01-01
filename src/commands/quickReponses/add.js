@@ -16,7 +16,13 @@ class aqrCommand extends Command {
       args: [
         {
           id: 'name',
-          type: 'uniqueQR',
+          type: async (msg, str) => {
+            if(!str) return null;
+            const typeResolver = this.handler.resolver.type('quickResponse');
+            const qr = await typeResolver(msg, str);
+            if(qr) return null;
+            return str.toLowerCase();
+          },
           prompt: {
             start: 'Enter a quick response name.',
             retry: '❌ A quick response with that name or alias already exists. Please enter a unique name.'
@@ -32,7 +38,13 @@ class aqrCommand extends Command {
         {
           id: 'aliases',
           match: 'none',
-          type: 'uniqueQR',
+          type: async (msg, str) => {
+            if(!str) return null;
+            const typeResolver = this.handler.resolver.type('quickResponse');
+            const qr = await typeResolver(msg, str);
+            if(qr) return null;
+            return str.toLowerCase();
+          },
           prompt: {
             infinite: true,
             start: 'Enter aliases in *separate* messages\nType `stop` when you\'re done',

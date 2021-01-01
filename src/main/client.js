@@ -58,11 +58,13 @@ class BotClient extends AkairoClient {
     this.commandHandler.useInhibitorHandler(this.inhibitorHandler);
     this.commandHandler.useListenerHandler(this.listenerHandler);
 
-    this.commandHandler.resolver.addType('uniqueQR', async (m, str) => {
+    this.commandHandler.resolver.addType('quickResponse', async (m, str) => {
       if(!str) return null;
-      const qr = await m.client.settings.get(m.guild.id, 'quickResponses', []);
-      if(qr.length && qr.find(q => q.name === str.toLowerCase() || (q.aliases.length && q.aliases.includes(str.toLowerCase())))) return null;
-      return str.toLowerCase();
+      const qrs = await m.client.settings.get(m.guild.id, 'quickResponses', []);
+      if(!qrs.length) return null;
+      const qr = qrs.find(q => q.name === str.toLowerCase() || (q.aliases.length && q.aliases.includes(str.toLowerCase())));
+      if(!qr) return null;
+      return qr;
     });
   }
   async login(token) {

@@ -2,7 +2,7 @@ const
   client = require('./client'),
   mongoose = require('mongoose');
 
-client.info('Connecting to database...')
+client.info('Connecting to database...');
 mongoose.connect(process.env.mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

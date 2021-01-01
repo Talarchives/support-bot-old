@@ -36,6 +36,7 @@ class tcmdCommand extends Command {
         .setDescription(disabledCommands.length ? disabledCommands.join('\n') : '❌ No commands disabled!');
       return msg.channel.send(embed);
     }
+    if(cmd.aliases[0] === 'tcmd') return msg.reply('❌ You can\'t disable this command.');
     if(disabledCommands.includes(cmd.aliases[0])) {
       disabledCommands = this.client.util.removeItemOnce(disabledCommands, cmd.aliases[0]);
       await this.client.settings.set(msg.guild.id, 'disabledCommands', disabledCommands);

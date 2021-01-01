@@ -16,7 +16,8 @@ class cmdErrorListener extends Listener {
   exec(msg, _, reason) {
     const strings = {
       'guild': '❌ This command can only be used in a server.',
-      'guildBanned': '❌ This server is banned.'
+      'guildBanned': '❌ This server is banned.',
+      'commandDisabled': '❌ This command is disabled in this server.'
     };
     return msg.reply(strings[reason]).catch();
   }

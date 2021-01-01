@@ -1,3 +1,4 @@
+console.info(`Process started at: ${new Date().toUTCString()}`)
 const { ShardingManager } = require('discord.js');
 const manager = new ShardingManager('./src/main/bot.js', { token: process.env.TOKEN });
 

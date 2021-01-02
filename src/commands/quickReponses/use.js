@@ -6,6 +6,7 @@ class uqrCommand extends Command {
       aliases: ['useQuickResponse', 'uqr', 'uq'],
       description: {
         content: 'Use a quick response',
+        image: 'https://media.discordapp.net/attachments/781780421103976452/794792733117382716/uq_command.gif',
         note: 'It can also be used as `.<name/alias>` e.g., `.cool`',
         usage: '<nameOrAlias>',
         examples: [

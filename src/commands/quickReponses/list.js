@@ -26,6 +26,7 @@ class lqrCommand extends Command {
 
   async exec(msg, args) {
     const embed = msg.client.util.embed()
+      .setDescription(`Use command \`${msg.util.parsed.prefix}lq <name/alias>\` to it's response and aliases`)
       .setColor(process.env.color)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL());
     if (args && args.qr) {

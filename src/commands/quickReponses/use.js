@@ -3,6 +3,7 @@ class uqrCommand extends Command {
   constructor() {
     super('uq', {
       category: 'Quick Response',
+      clientPermissions: 'MANAGE_WEBHOOKS',
       aliases: ['useQuickResponse', 'uqr', 'uq'],
       description: {
         content: 'Use a quick response',

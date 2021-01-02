@@ -8,6 +8,7 @@ class aqrCommand extends Command {
       aliases: ['addQuickResponse', 'aqr', 'aq'],
       description: {
         content: 'Add a quick response',
+        image: 'https://i.imgur.com/pd1Pi4P.gif',
         usage: '<name> <response>',
         examples: [
           'cool You are cool!'

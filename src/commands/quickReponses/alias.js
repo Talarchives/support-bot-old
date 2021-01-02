@@ -78,14 +78,8 @@ class eqraCommand extends Command {
 
 function makeStr(qr, alias, addOrRemove) {
   const str1 = qr.aliases.map(a => a === alias ? `~~**\`${a}\`**~~` : `\`${a}\``).join(', '),
-    str2 = addOrRemove === 'add' ? `, ${string(alias, addOrRemove)}` : '';
+    str2 = addOrRemove === 'add' ? `, __**\`${alias}\`**__` : '';
   return str1 + str2;
-}
-
-function string(str, addOrRemove) {
-  return addOrRemove === 'add' ?
-    `__**\`${str}\`**__` :
-    `~~**\`${str}\`**~~`;
 }
 
 module.exports = eqraCommand;

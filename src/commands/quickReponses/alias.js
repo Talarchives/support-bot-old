@@ -57,13 +57,13 @@ class eqraCommand extends Command {
   }
 
   async exec(msg, { qr, addOrRemove, alias }) {
-    if(qr.aliases.length === 1 && addOrRemove === 'remove') return msg.reply('❌ Failed to remove alias. A quick response must have at least 1 alias.');
+    if (qr.aliases.length === 1 && addOrRemove === 'remove') return msg.reply('❌ Failed to remove alias. A quick response must have at least 1 alias.');
     const embed = msg.client.util.embed()
       .setColor(process.env.color)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .addFields([
         { name: 'Name', value: qr.name, inline: true },
-        { name: 'Edited Aliases', value: qr.aliases.map(a => a === alias ? string(a, addOrRemove) : `\`${a}\``).join(', '), inline: true },
+        { name: 'Edited Aliases', value: makeStr(qr, alias, addOrRemove), inline: true },
         { name: 'Response', value: qr.response }
       ]);
     let qrs = await this.client.settings.get(msg.guild.id, 'quickResponse', []);
@@ -72,8 +72,14 @@ class eqraCommand extends Command {
       this.client.util.removeItemOnce(qr.aliases, alias);
     await this.client.settings.set(msg.guild.id, 'quickResponse', qrs);
 
-    msg.reply(`✅ Alias ${addOrRemove === 'add' ? 'added' : 'remove'} succesfully!`, embed);
+    msg.reply(`✅ Alias ${addOrRemove === 'add' ? 'added' : 'removed'} succesfully!`, embed);
   }
+}
+
+function makeStr(qr, alias, addOrRemove) {
+  const str1 = qr.aliases.map(a => a === alias ? `~~**\`${a}\`**~~` : `\`${a}\``).join(', '),
+    str2 = addOrRemove === 'add' ? `, ${string(alias, addOrRemove)}` : '';
+  return str1 + str2;
 }
 
 function string(str, addOrRemove) {

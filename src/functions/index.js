@@ -149,7 +149,7 @@ const
 // Logger settings
 betterLogging(console, {
   format: ctx => `${ctx.STAMP(new Date().toUTCString(), chalk.blueBright)} | ${ctx.time12}${ctx.date}${ctx.unix} ${ctx.type} ${ctx.msg}`,
-  saveToFile: `./logs/.log`,
+  saveToFile: './logs/.log',
   color: Theme.dark,
   messageConstructionStrategy: MessageConstructionStrategy.ALL
 });

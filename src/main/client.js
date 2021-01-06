@@ -73,10 +73,26 @@ class BotClient extends AkairoClient {
           const scs = await m.client.settings.get(m.guild.id, 'supportChannels', []);
           if (!scs.length) return null;
           const chnl = await m.client.util.resolveChannel(str, m.guild.channels.cache);
-          if(!chnl) return null;
+          if (!chnl) return null;
           const sc = scs.find(s => s.supportChannel === chnl.id || s.ticketCategory === chnl.id || s.logChannel === chnl.id);
           if (!sc) return null;
           return sc;
+        },
+        ticket: async (m, str) => {
+          if (!str) return null;
+          let tickets = await m.client.settings.get(m.guild.id, 'tickets', []);
+          if (!tickets.length) return null;
+          const t = tickets.find(a => a.id === str || a.channel === str);
+          if (!t || t.closed) return null;
+          const chnl = m.guild.channels.cache.get(t.ticketChannel);
+          if (!chnl || chnl.deleted) {
+            t.closed = true;
+            t.closeReason = 'channelDeleted';
+            tickets = m.client.util.removeItemOnce(tickets, t);
+            await m.client.settings.set(m.guild.id, 'tickets', tickets);
+            return null;
+          }
+          return { t, chnl };
         }
       }
     );

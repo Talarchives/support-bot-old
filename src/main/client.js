@@ -2,7 +2,7 @@ const
   { AkairoClient, CommandHandler, InhibitorHandler, ListenerHandler, MongooseProvider } = require('discord-akairo'),
   path = require('path'),
   guildModel = require('../models/Guild'),
-  { prefix, startPresence } = require('../config.json');
+  { prefix, startPresence, mainGuild } = require('../config.json');
 
 class BotClient extends AkairoClient {
   constructor() {
@@ -80,16 +80,17 @@ class BotClient extends AkairoClient {
         },
         ticket: async (m, str) => {
           if (!str) return null;
-          let tickets = await m.client.settings.get(m.guild.id, 'tickets', []);
+          const guild = m.guild ? m.guild : m.client.guilds.cache.get(mainGuild);
+          let tickets = await m.client.settings.get(guild.id, 'tickets', []);
           if (!tickets.length) return null;
-          const t = tickets.find(a => a.id === str || a.channel === str);
+          const t = tickets.find(a => (a.id === str || a.channel === str) && a.closed === false);
           if (!t || t.closed) return null;
-          const chnl = m.guild.channels.cache.get(t.ticketChannel);
+          const chnl = guild.channels.cache.get(t.channel);
           if (!chnl || chnl.deleted) {
             t.closed = true;
             t.closeReason = 'channelDeleted';
             tickets = m.client.util.removeItemOnce(tickets, t);
-            await m.client.settings.set(m.guild.id, 'tickets', tickets);
+            await m.client.settings.set(guild.id, 'tickets', tickets);
             return null;
           }
           return { t, chnl };

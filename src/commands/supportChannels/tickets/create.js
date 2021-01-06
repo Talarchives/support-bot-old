@@ -64,7 +64,7 @@ module.exports = class createTicketCommand extends Command {
     await member.user.send(`Please send me an invite to your server for your ticket (${chnl})`)
       .catch(() => chnl.send(`${member.user}, Please open your DMs and send me an invite to your server.`));
     const embed = this.client.util.embed()
-      .setTitle(topic)
+      .setTitle('Ticket')
       .setDescription([
         '**User Info:**',
         `**User ID:** ${member.id}`,
@@ -78,7 +78,7 @@ module.exports = class createTicketCommand extends Command {
       .setTimestamp();
     const tMsg = await chnl.send(`Ticket for ${member.user} created by ${msg.author}`, embed);
 
-    const tickets = await this.client.settings.get(msg.guild.id, 'tickets', []);
+    let tickets = await this.client.settings.get(msg.guild.id, 'tickets', []);
     const newTicket = {
       id: member.id,
       cMsg: m.id,
@@ -92,7 +92,7 @@ module.exports = class createTicketCommand extends Command {
       closedBy: null,
       closeReason: null
     };
-    tickets.concat(newTicket);
+    tickets = tickets.concat(newTicket);
     await this.client.settings.set(msg.guild.id, 'tickets', tickets);
     return m.edit(`${msg.author}, ✅ Ticket created for ${member.user.tag}. | **Status:** Open`);
   }

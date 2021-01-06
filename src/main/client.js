@@ -3,7 +3,7 @@ const
   path = require('path'),
   guildModel = require('../models/Guild'),
   { prefix, startPresence } = require('../config.json');
-  
+
 class BotClient extends AkairoClient {
   constructor() {
     super({
@@ -58,12 +58,35 @@ class BotClient extends AkairoClient {
     this.commandHandler.useInhibitorHandler(this.inhibitorHandler);
     this.commandHandler.useListenerHandler(this.listenerHandler);
 
+    this.commandHandler.resolver.addTypes(
+      {
+        quickResponse: async (m, str) => {
+          if (!str) return null;
+          const qrs = await m.client.settings.get(m.guild.id, 'quickResponses', []);
+          if (!qrs.length) return null;
+          const qr = qrs.find(q => q.name === str.toLowerCase() || (q.aliases.length && q.aliases.includes(str.toLowerCase())));
+          if (!qr) return null;
+          return qr;
+        },
+        supportChannel: async (m, str) => {
+          if (!str) return null;
+          const scs = await m.client.settings.get(m.guild.id, 'supportChannels', []);
+          if (!scs.length) return null;
+          const chnl = await m.client.util.resolveChannel(str, m.guild.channels.cache);
+          if(!chnl) return null;
+          const sc = scs.find(s => s.supportChannel === chnl.id || s.ticketCategory === chnl.id || s.logChannel === chnl.id);
+          if (!sc) return null;
+          return sc;
+        }
+      }
+    );
+
     this.commandHandler.resolver.addType('quickResponse', async (m, str) => {
-      if(!str) return null;
+      if (!str) return null;
       const qrs = await m.client.settings.get(m.guild.id, 'quickResponses', []);
-      if(!qrs.length) return null;
+      if (!qrs.length) return null;
       const qr = qrs.find(q => q.name === str.toLowerCase() || (q.aliases.length && q.aliases.includes(str.toLowerCase())));
-      if(!qr) return null;
+      if (!qr) return null;
       return qr;
     });
   }

@@ -2,7 +2,7 @@ const { Command } = require('discord-akairo');
 module.exports = class closeTicketCommand extends Command {
   constructor() {
     super('closeTicket', {
-      category: 'Tickets',
+      category: 'Ticket',
       aliases: ['closeTicket', 'close'],
       userPermissions: 'MANAGE_MESSAGES',
       clientPermissions: [

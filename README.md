@@ -1,5 +1,5 @@
 # Support Bot
-A discord support bot
+A Discord Support Bot...
 
 # Things to do before starting
 ### Run `npm i`
@@ -10,8 +10,32 @@ The `.env` file currently requires:
 ```js
 TOKEN=token_here
 mongoUri=mongo_uri_here
-color=0xFFAC33
 ```
 
 ### Configure `./src/config.json`
-Configuring `config.json` is optional.
+Configure `config.json`.
+```json
+{
+  "mainGuild": "main_guild_id",
+  "color": "0xFFAC33",
+  "prefix": "?",
+  "presence": {
+      "activity": { "name": "someone", "type": "WATCHING" },
+      "status": "online"
+  },
+  "startPresence": {
+    "status": "idle",
+    "activity": {
+      "name": "a loading game ⏳",
+      "type": "COMPETING"
+    }
+  },
+  "bins": [
+    "https://hastebin.com",
+    "https://starb.in",
+    "https://haste.red-panda.red/",
+    "https://paste.hep.gg/",
+    "https://haste.rauf.wtf/"
+  ]
+}
+```

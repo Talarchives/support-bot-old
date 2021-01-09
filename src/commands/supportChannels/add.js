@@ -62,7 +62,7 @@ module.exports = class ascCommand extends Command {
     );
     await this.client.settings.set(msg.guild.id, 'supportChannels', scs);
     const embed = this.client.util.embed()
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .setDescription(`**Support Channel:** ${sc}\n**Ticket Category:** ${tc}\n**Logs Channel:** ${lc}`);
     return msg.reply('✅ Support Channel added!', embed);

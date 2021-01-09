@@ -59,7 +59,7 @@ class eqraCommand extends Command {
   async exec(msg, { qr, addOrRemove, alias }) {
     if (qr.aliases.length === 1 && addOrRemove === 'remove') return msg.reply('❌ Failed to remove alias. A quick response must have at least 1 alias.');
     const embed = msg.client.util.embed()
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .addFields([
         { name: 'Name', value: qr.name, inline: true },

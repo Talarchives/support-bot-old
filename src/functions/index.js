@@ -1,5 +1,5 @@
 // ========================================================================================== \\
-const ClientUtil = require('./ClientUtil'), hastebin = require('hastebin-gen'), { bins } = require('../config.json');
+const ClientUtil = require('./ClientUtil'), hastebin = require('hastebin-gen'), config = require('../config.json');
 /**
  * Utilities
  */
@@ -77,8 +77,8 @@ let util = {
   // haste-bin maker
   async haste(str) {
     let haste, i = 0;
-    while (!haste && i < bins.length) {
-      await hastebin(str, { url: bins[i] })
+    while (!haste && i < config.bins.length) {
+      await hastebin(str, { url: config.bins[i] })
         .then(link => {
           haste = link;
         })
@@ -156,7 +156,7 @@ betterLogging(console, {
 
 // Assign values
 const
-  prefix = require('../config.json').prefix,
+  defaultConfig = config,
   log = console.log,
   warn = console.warn,
   error = console.error,
@@ -171,6 +171,6 @@ const
  */
 module.exports = {
   util,
-  prefix,
+  defaultConfig,
   log, warn, error, info, debug, line
 };

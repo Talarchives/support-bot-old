@@ -16,7 +16,7 @@ module.exports = class listscCommand extends Command {
     const scs = await this.client.settings.get(msg.guild.id, 'supportChannels', []);
     if(!scs.length) return msg.reply('❌ No support channels have been added in this server!');
     const embed = this.client.util.embed()
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .setTitle('List of Support Channels');
     scs.forEach((sc, i) => {

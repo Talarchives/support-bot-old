@@ -36,7 +36,7 @@ module.exports = class escCommand extends Command {
     let scs = await this.client.settings.get(msg.guild.id, 'supportChannels', []);
     scs = this.client.util.removeItemOnce(scs, sc);
     const embed = this.client.util.embed()
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .addField('__Before__', `**Support Channel:** <#${sc.supportChannel}>\n**Ticket Category:** <#${sc.ticketCategory}>\n**Logs Channel:** <#${sc.logChannel}>`);
     sc = tcOrLc.type === 'category' ?

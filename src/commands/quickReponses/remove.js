@@ -34,7 +34,7 @@ class rqrCommand extends Command {
     await this.client.settings.set(msg.guild.id, 'quickResponses', newQrs);
     const embed = msg.client.util.embed()
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .addFields([
         { name: 'Name', value: qr.name, inline: true },
         { name: 'Aliases', value: qr.aliases.map(a => `\`${a}\``).join(', '), inline: true },

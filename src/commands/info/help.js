@@ -45,7 +45,7 @@ class HelpCommand extends Command {
     const embed = this.client.util.embed()
       .setImage(description.image)
       .setAuthor(message.author.tag, message.author.displayAvatarURL())
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .setTitle(`\`${prefix}${command.aliases[0]} ${description.usage ? description.usage : ''}\``)
       .addField('Description', description.content);
 
@@ -69,7 +69,7 @@ class HelpCommand extends Command {
     const prefix = message.util.parsed.prefix;
     const embed = this.client.util.embed()
       .setAuthor(message.author.tag, message.author.displayAvatarURL())
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .addField('Command List',
         [
           'This is a list of commands.',

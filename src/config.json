@@ -1,5 +1,6 @@
 {
   "mainGuild": "781780421103976449",
+  "color": "0xFFAC33",
   "prefix": "?",
   "presence": {
       "activity": { "name": "Promise Solutions 👀", "type": "WATCHING" },

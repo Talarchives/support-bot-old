@@ -35,7 +35,7 @@ class eqrCommand extends Command {
 
   async exec(msg, { qr, newResponse }) {
     const embed = msg.client.util.embed()
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .addFields([
         { name: 'Name', value: qr.name, inline: true },

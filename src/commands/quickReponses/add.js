@@ -65,7 +65,7 @@ class aqrCommand extends Command {
     await this.client.settings.set(msg.guild.id, 'quickResponses', qr);
     const embed = msg.client.util.embed()
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .addFields([
         { name: 'Name', value: args.name, inline: true },
         { name: 'Aliases', value: args.aliases.map(a => `\`${a}\``).join(', '), inline: true },

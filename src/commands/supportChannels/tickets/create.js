@@ -72,7 +72,7 @@ module.exports = class createTicketCommand extends Command {
         `**Joined Server:** ${this.client.util.msToTime(new Date().getTime() - member.joinedAt)} ago`
       ])
       .addField('__**Question/Issue**__', reason)
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .setThumbnail(member.user.displayAvatarURL())
       .setFooter(member.id)
       .setTimestamp();

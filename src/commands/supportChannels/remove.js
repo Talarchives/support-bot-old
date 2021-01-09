@@ -29,7 +29,7 @@ module.exports = class rscCommand extends Command {
   async exec(msg, { sc }) {
     let scs = await this.client.settings.get(msg.guild.id, 'supportChannels', []);
     const embed = this.client.util.embed()
-      .setColor(process.env.color)
+      .setColor(this.client.defaultConfig.color)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .setDescription(`**Support Channel:** <#${sc.supportChannel}>\n**Ticket Category:** <#${sc.ticketCategory}>\n**Logs Channel:** <#${sc.logChannel}>`);
     const m = await msg.reply('⚠ Are you sure you want to remove this support channel?', embed);

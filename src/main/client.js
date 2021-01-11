@@ -2,7 +2,8 @@ const
   { AkairoClient, CommandHandler, InhibitorHandler, ListenerHandler, MongooseProvider } = require('discord-akairo'),
   path = require('path'),
   guildModel = require('../models/Guild'),
-  { prefix, startPresence, mainGuild } = require('../config.json');
+  ticketModel = require('../models/Ticket'),
+  { prefix, startPresence } = require('../config.json');
 
 class BotClient extends AkairoClient {
   constructor() {
@@ -48,6 +49,7 @@ class BotClient extends AkairoClient {
 
     // Mongoose Provider
     this.settings = new MongooseProvider(guildModel);
+    this.tickets = new MongooseProvider(ticketModel);
 
     this.listenerHandler.setEmitters({
       process: process,
@@ -80,20 +82,24 @@ class BotClient extends AkairoClient {
         },
         ticket: async (m, str) => {
           if (!str) return null;
-          const guild = m.guild ? m.guild : m.client.guilds.cache.get(mainGuild);
-          let tickets = await m.client.settings.get(guild.id, 'tickets', []);
-          if (!tickets.length) return null;
-          const t = tickets.find(a => (a.id === str || a.channel === str) && a.closed === false);
-          if (!t || t.closed) return null;
-          const chnl = guild.channels.cache.get(t.channel);
-          if (!chnl || chnl.deleted) {
-            t.closed = true;
-            t.closeReason = 'channelDeleted';
-            tickets = m.client.util.removeItemOnce(tickets, t);
-            await m.client.settings.set(guild.id, 'tickets', tickets);
-            return null;
+          const tickets = await m.client.tickets.get(str, 'openTickets', []);
+          if(!tickets.length) return null;
+          const openTickets = [];
+          for (const t of tickets) {
+            const guild = m.client.guilds.cache.get(t.guild);
+            const chnl = guild.channels.cache.get(t.channel);
+            if (!chnl || chnl.deleted) {
+              const closeData = {
+                closedBy: null,
+                closeReason: 'channelDeleted'
+              };
+              await m.client.ticket.close(m.client, str, t, closeData);
+            } else {
+              openTickets.push(t);
+            }
           }
-          return { t, chnl };
+          if (m.guild && openTickets.length > 1) return openTickets.find(t => t.guild === m.guild.id);
+          return openTickets;
         }
       }
     );

@@ -7,6 +7,19 @@ const ClientUtil = require('./ClientUtil'), hastebin = require('hastebin-gen'), 
 let util = {
 
   /**
+   * Confirm something, by giving reactions
+   * Await Reactions and return them
+   */
+  async confirm(msg, emojis, filter, options) {
+    for (const emoji of emojis) {
+      await msg.react(emoji);
+    }
+    const reactions = await msg.awaitReactions(filter, options);
+    return reactions;
+  },
+
+
+  /**
    * Removing specific items from an array 
    */
   removeItemOnce(arr, value) {
@@ -16,7 +29,7 @@ let util = {
     }
     return arr;
   },
-  
+
   removeItemAll(arr, value) {
     var i = 0;
     while (i < arr.length) {
@@ -83,7 +96,7 @@ let util = {
           haste = link;
         })
         .catch(e => {
-          if(e) i++;
+          if (e) i++;
         });
     }
     // https://haste.red-panda.red/ puts a double // at the end for some reasons
@@ -154,6 +167,40 @@ betterLogging(console, {
   messageConstructionStrategy: MessageConstructionStrategy.ALL
 });
 
+const ticket = {
+  async open(client, id, ticket) {
+    let tickets = await client.tickets.get(id, 'openTickets', []);
+    tickets = tickets.concat(ticket);
+    await client.tickets.set(id, 'openTickets', tickets);
+  },
+  async close(client, id, ticket, closeData) {
+    let openTickets = await client.tickets.get(id, 'openTickets', []);
+    let closedTickets = await client.tickets.get(id, 'closedTickets', []);
+
+    const t = openTickets.find(t => t.channel === ticket.channel);
+    if (!openTickets.length || !t) return false;
+
+    openTickets = client.util.removeItemOnce(openTickets, t);
+    await client.tickets.set(id, 'openTickets', openTickets);
+
+    t.closed = true;
+    t.closedReason = closeData.closeReason;
+    t.closedBy = closeData.closedBy;
+    closedTickets = closedTickets.concat(ticket);
+    await client.tickets.set(id, 'closedTickets', closedTickets);
+    return true;
+  },
+
+  async edit(client, id, oldTicket, newTicket) {
+    let tickets = await client.tickets.get(id, 'openTickets', []);
+    if(!tickets.length) return false;
+    tickets = client.util.removeItemOnce(tickets, oldTicket);
+    tickets = tickets.concat(newTicket);
+    await client.tickets.set(id, 'openTickets', tickets);
+    return true;
+  }
+};
+
 // Assign values
 const
   defaultConfig = config,
@@ -171,6 +218,7 @@ const
  */
 module.exports = {
   util,
+  ticket,
   defaultConfig,
   log, warn, error, info, debug, line
 };

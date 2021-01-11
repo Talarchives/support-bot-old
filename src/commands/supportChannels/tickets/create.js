@@ -44,10 +44,12 @@ module.exports = class createTicketCommand extends Command {
     const category = this.client.util.resolveChannel(sch.ticketCategory, msg.guild.channels.cache);
     if (!category) return msg.reply(`❌ Ticket Category not found, please add category with command: \`${msg.util.parsed.prefix}esc ${msg.channel} <newTicketCategory>\``);
     const typeResolver2 = this.handler.resolver.type('ticket');
-    const ticket = await typeResolver2(msg, member.id);
+    const t = await typeResolver2(msg, member.id);
+    if(t) var ticket = t.find(a => a.guild === msg.guild.id);
     if (ticket) {
       msg.reply(`❌ A ticket is already open for ${member.user.tag}`);
-      return ticket.chnl.send(msg.author);
+      const chnl = msg.client.channels.cache.get(ticket.channel);
+      return chnl.send(msg.author);
     }
     const
       m = await msg.reply('⏳ Making a ticket, please wait.'),
@@ -78,13 +80,13 @@ module.exports = class createTicketCommand extends Command {
       .setTimestamp();
     const tMsg = await chnl.send(`Ticket for ${member.user} created by ${msg.author}`, embed);
 
-    let tickets = await this.client.settings.get(msg.guild.id, 'tickets', []);
     const newTicket = {
       id: member.id,
       cMsg: m.id,
       tMsg: tMsg.id,
       reason,
       invite: null,
+      guild: msg.guild.id,
       channel: chnl.id,
       createdBy: msg.author.id,
       createdFor: member.id,
@@ -92,8 +94,12 @@ module.exports = class createTicketCommand extends Command {
       closedBy: null,
       closeReason: null
     };
-    tickets = tickets.concat(newTicket);
-    await this.client.settings.set(msg.guild.id, 'tickets', tickets);
+
+    let guildTickets = await this.client.settings.get(msg.guild.id, 'Tickets', []);
+    guildTickets = guildTickets.concat({ channel: chnl.id, user: member.id }); 
+    await this.client.settings.set(msg.guild.id, 'Tickets', guildTickets);
+    
+    await this.client.ticket.open(this.client, member.id, newTicket);
     return m.edit(`${msg.author}, ✅ Ticket created for ${member.user.tag}. | **Status:** Open`);
   }
 };

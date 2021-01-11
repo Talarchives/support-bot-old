@@ -35,13 +35,17 @@ module.exports = class closeTicketCommand extends Command {
     const typeResolver = this.handler.resolver.type('supportChannel');
     const sch = await typeResolver(msg, msg.channel.parentID);
     if (!sch) return msg.reply('❌ This ticket for a moved to a different category, unable to close.');
+    const guildTickets = await this.client.settings.get(msg.guild.id, 'Tickets', []);
+    if (!guildTickets.length) return notTicketChannel(msg);
+    const gT = guildTickets.find(a => a.channel === msg.channel.id);
+    if (!gT) return notTicketChannel(msg);
     const typeResolver2 = this.handler.resolver.type('ticket');
-    const t = await typeResolver2(msg, msg.channel.id);
-    if (!t) return msg.reply('❌ This command can only be used in a ticket channel');
-    const ticket = t.t;
+    const t = await typeResolver2(msg, gT.user);
+    if (!t || !t.length) return notTicketChannel(msg);
+    const ticket = t.find(a => a.channel === msg.channel.id);
+    if (!ticket) return notTicketChannel(msg);
     const logChannel = msg.guild.channels.cache.get(sch.logChannel);
     if (!logChannel) return msg.reply(`❌ The log channel does not exist, please add log channel with command: \`${msg.util.parsed.prefix}esc ${msg.channel} <newLogChannel>\``);
-    let tickets = await this.client.settings.get(msg.guild.id, 'tickets', []);
     await msg.reply('⏳ Closing ticket, please wait.');
     const msgs = await msg.channel.messages.fetch();
     const reas = [`Info: ${msg.channel.topic}\nQuestion: ${ticket.question}\nClosed By: ${msg.author.tag} (${msg.author.id})\nReason: ${reason}\n**Invite:** ${ticket.invite}\n`];
@@ -50,15 +54,14 @@ module.exports = class closeTicketCommand extends Command {
     arr.sort();
     const log = reas.concat(arr);
     const haste = await this.client.util.haste(log.join('\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n'));
-    tickets = this.client.util.removeItemOnce(tickets, ticket);
+    const oldTicket = ticket;
     ticket.closed = true;
     ticket.closedBy = msg.author.id;
     ticket.closeReason = reason;
-    tickets = tickets.concat(ticket);
-    await this.client.settings.set(msg.guild.id, 'tickets', tickets);
+    await this.client.ticket.close(this.client, gT.user, oldTicket, ticket);
     await logChannel.send(`Ticket closed by ${msg.author.tag} (${msg.author.id})\n**Info**:\n${msg.channel.topic}\n**Question/Issue:** ${ticket.reason}\n**Closing Reason**: ${reason}\n**Invite:** ${ticket.invite}\n**Log**: ${haste}`);
     const sc = msg.client.channels.cache.get(sch.supportChannel);
-    if(sc) {
+    if (sc) {
       const m = await sc.messages.fetch(ticket.cMsg);
       const str = m.content.replace('**Status:** Open', `**Status:** Closed by ${msg.author.tag} | **Reason:** ${reason}`);
       m.edit(str);
@@ -66,3 +69,7 @@ module.exports = class closeTicketCommand extends Command {
     return await msg.channel.delete(reason).catch();
   }
 };
+
+function notTicketChannel(msg) {
+  return msg.reply('❌ This command can only be used in a ticket channel');
+}
